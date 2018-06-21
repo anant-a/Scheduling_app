@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <title>Scheduling App</title>
+    </head>
+    <body>
+        <div id="display"></div>
+        <h1>Request a studio!</h1>
+        <form id="req_form" method="POST" action="api/request/">
+            <p>Enter your name:</p>
+            <input type="text" placeholder="Your name here..." class="name">
+            <br>
+            <p>Enter your email id:</p>
+            
+            <input type="email" placeholder="Your email here..." class="email">
+            <p>Select your studio:</p>
+            
+            <select name="studios" class="studios">
+                    <option value="studio-1">Studio 1</option>
+                    <option value="studio-2">Studio 2</option>
+                    <option value="studio-3">Studio 3</option>
+             </select>
+             <br>
+             <p>Description:</p>
+             
+             <textarea class="description"></textarea>
+             <br>
+             <button class="btn" type="submit" value="submit">Submit</button>
+             
+        </form>
+        <script src="res/jquery.js" type="text/javascript"></script>
+        <script src="main.js" type="text/javascript"></script>
+    </body>
+</html>
