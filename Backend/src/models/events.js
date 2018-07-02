@@ -10,7 +10,12 @@ const eventSchema = new Schema({
     endTime         :{type:Date, required: true},
     timeStamp       :{type:Date, default: Date.now()},
     requestStatus   :{type:String, default:'Pending' },
-    isDeleted       :{type:Boolean, default:false}
+    isDeleted       :{type:Boolean, default:false},
+    manager         :{type:String, required: true},
+    team            :{type:String, required: true},
+    shootType       :{type:String, required: true},
+    assets          :{type:String, required: true},
+    crew            :{type:String, required: true}
 });
 
 module.exports = mongoose.model('Event', eventSchema)

@@ -1,11 +1,18 @@
 <html>
     <head>
         <title>Scheduling App</title>
+        <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+        <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+        <link rel = "stylesheet" type="text/css" href="res/css/jquery-ui.structure.min.css">
+        <link rel = "stylesheet" type="text/css" href="res/css/jquery-ui.theme.css">
+        <link rel = "stylesheet" type="text/css" href="res/css/req_form.css">
     </head>
     <body>
-        <div id="display"></div>
-        <h1>Request a studio!</h1>
+        
+        
         <form id="req_form" method="POST" action="api/request/">
+            <div id="display"></div>
+            <h2>Request a studio!</h2>
             <p>Enter your name:</p>
             <input type="text" placeholder="Your name here..." class="name">
             <br>
@@ -14,7 +21,7 @@
             <input type="email" placeholder="Your email here..." class="email">
             <p>Select your studio:</p>
             
-            <select name="studios" class="studios">
+            <select name="studios" class="studios select_style">
                     <option value="studio-1">Studio 1</option>
                     <option value="studio-2">Studio 2</option>
                     <option value="studio-3">Studio 3</option>
@@ -22,12 +29,43 @@
              <br>
              <p>Description:</p>
              
-             <textarea class="description"></textarea>
+             <textarea class="description" id="styled" onfocus="this.value=''; setbg('#e5fff3');" onblur="setbg('white')"></textarea>
+             <br>
+             <p>Start Day:</p>
+             <input type="text"  class="st"   placeholder="Enter start day...">
+             <p>End Day:</p>
+             <input type="text"  placeholder="Enter end day..."  class="et">
+             <br>
+             <p>Start Time:</p>
+             <input type="time"  class="entert"   placeholder="Enter start time...">
+             <p>End Time:</p>
+             <input type="time"  class="exitt"   placeholder="Enter end time...">
+             <p> Manager:</p>
+             <input type="text"  placeholder="Manager's name"  class="man">
+             <br>
+             <p>Team:</p>
+             <input type="text"  placeholder="Team name"  class="team">
+             <br>
+             <p>Assets Required:</p>
+             <input type="text"  placeholder="Enter the assets"  class="ass">
+             <br>
+             <p>Shoot Type:</p>
+             <input type="text"  placeholder="Type of shoot"  class="shoot">
+             <br>
+             <p>Crew:</p>
+             <input type="text"  placeholder="Crew Required"  class="crew">
              <br>
              <button class="btn" type="submit" value="submit">Submit</button>
              
         </form>
-        <script src="res/jquery.js" type="text/javascript"></script>
-        <script src="main.js" type="text/javascript"></script>
+       
+        <script src="res/JS/jquery.js" type="text/javascript"></script>
+        <script
+        src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+        integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+        crossorigin="anonymous"></script>
+        <script src="./res/JS/jquery-ui.min.js" type="text/javascript"></script>
+        
+        <script src="res/JS/main.js" type="text/javascript"></script>
     </body>
 </html>

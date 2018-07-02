@@ -9,12 +9,40 @@ shortid.characters('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWX
 const Appointment   = require('../models/request');
 const Event   = require('../models/events');
 
+const passport = require('passport');
+const config = require('../config/database');
+require('../config/passport')(passport);
+const jwt = require('jsonwebtoken');
+const User = require("../models/user");
+
+getToken = function (headers) {
+    if (headers && headers.authorization) {
+      let parted = headers.authorization.split(' ');
+      if (parted.length === 2) {
+        return parted[1];
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  };
 
 //creating a request
 router.route('/')
 
     .post(function(req,res){
+        //let testTime = new Date(req.body.startingTime);
+       // let testTime = new Date();
+        //console.log(testTime.toLocaleTimeString());
         
+        let a =new Date(req.body.startTime);
+       
+        
+        //console.log(testTime)
+        let b = new Date(req.body.endTime);
+        console.log(req.body.startTime)
+        console.log(  new Date( a.getTime() + Math.abs(a.getTimezoneOffset()*60000) )  );
     let appoint= new Appointment();    
     appoint.name = req.body.name;
     
@@ -22,11 +50,17 @@ router.route('/')
     appoint.requestId = 'TNL-'+String(new Date().getFullYear()).substr(2,2)+'-'+shortid.generate(),
     appoint.studio = req.body.studio;
     appoint.description = req.body.description;
-    appoint.startTime = req.body.startTime,
-    appoint.endTime = req.body.endTime,
+    appoint.startTime =  new Date( a.getTime() + Math.abs(a.getTimezoneOffset()*60000) );
+    appoint.endTime =  new Date( b.getTime() + Math.abs(b.getTimezoneOffset()*60000) ) 
     appoint.timeStamp = Date.now(),
     appoint.isDeleted = false,
-    appoint.requestStatus = 'Pending'
+    appoint.requestStatus = 'Pending',
+    appoint.manager = req.body.manager;
+    appoint.team = req.body.team;
+    appoint.shootType= req.body.shootType;
+    appoint.crew = req.body.crew;
+    appoint.assets = req.body.assets;
+    
     console.log(appoint);
   
     
@@ -42,8 +76,10 @@ router.route('/')
         console.log('Chal!')
        })
     //listing all requested events   
-    .get(function(req,res){
-        
+    .get(passport.authenticate('jwt', { session: false}),function(req,res){
+        let token = getToken(req.headers);
+        if (token){ 
+            console.log(req.body)
         Appointment.find({isDeleted: false}, function(err, appoint5){
             if(err){
                 res.send(err);
@@ -52,7 +88,12 @@ router.route('/')
                 res.json(appoint5);
                 console.log(appoint5);
             }
+            
         })
+    }
+    else{
+        return res.status(403).send({success: false, msg: 'Unauthorized.'});
+    }
 
     });
 
@@ -100,7 +141,10 @@ router.route('/requestId')
     })
 //listing all the pending requests
 router.route('/listing')
-    .get(function(req,res){
+    .get(passport.authenticate('jwt', { session: false}),function(req,res){
+        let token = getToken(req.headers);
+        ////
+        if(token){
         Appointment.find({requestStatus : 'Pending', isDeleted : false},'requestId startTime endTime', function(err, appoint5){
             //let requestList = [];
             if(err){
@@ -116,23 +160,36 @@ router.route('/listing')
             res.json(appoint5);       
            }
         })
+    }
+    else{
+        return res.status(403).send({success: false, msg: 'Unauthorized.'});
+    }
     })
 // details of a partiular request for admin page
 router.route('/details')
-    .get(function(req,res){
+    .get(passport.authenticate('jwt', { session: false}),function(req,res){
+        let token = getToken(req.headers);
+        if(token){
         Appointment.find({requestId: req.query.requestId}, function(err, details){
             console.log(details);
             res.json(details[0]);
         })
-
+    }
+    else{
+        return res.status(403).send({success: false, msg: 'Unauthorized.'});
+    }
     })
 
     
 // accept-decline applications
 router.route('/confirmation')
-    .get(function(req,res){
+    .get(passport.authenticate('jwt', { session: false}),function(req,res){
+        let token = getToken(req.headers);
+        if(token){
         let action = req.query.action;
         let event = new Event();
+        console.log(req.query.requestId);
+        console.log(action);
         Appointment.find({requestId: req.query.requestId, requestStatus : 'Pending'}, function(err, details){
             console.log(details);
             if(err){
@@ -148,7 +205,14 @@ router.route('/confirmation')
                event.timeStamp= details[0].timeStamp;
                event.isDeleted = details[0].isDeleted;
                event.requestId = details[0].requestId;
-               event.requestStatus = "Accepted"
+               event.requestStatus = "Accepted";
+               event.manager = details[0].manager;
+               event.crew = details[0].crew;
+               event.assets = details[0].assets;
+               event.shootType = details[0].shootType;
+               event.team = details[0].team;
+
+
                console.log(event);
             
                event.save(function(err){
@@ -187,12 +251,17 @@ router.route('/confirmation')
 
             }
         })
-        
+    }
+    else{
+        return res.status(403).send({success: false, msg: 'Unauthorized.'});
+    }  
     })
 
 //listing all aproved events 
 router.route('/approved')
-    .get(function(req,res){
+    .get(passport.authenticate('jwt', { session: false}),function(req,res){
+        let token = getToken(req.headers);
+        if(token){
         Event.find({}, function(err, app_events){
             if(err){
                 res.json(err)
@@ -201,7 +270,76 @@ router.route('/approved')
                 res.json(app_events);
             }
         })
+    }
+    else{
+        return res.status(403).send({success: false, msg: 'Unauthorized.'});
+    }
     })
 
+router.route('/signup')
+    .post(function(req,res){
+        if (!req.body.email || !req.body.password) {
+            res.json({success: false, msg: 'Please pass email and password.'});
+          } else {
+            let newUser = new User({
+              email: req.body.email,
+              password: req.body.password
+            });
+            // save the user
+            newUser.save(function(err) {
+              if (err) {
+                return res.json({success: false, msg: 'Email already exists.'});
+              }
+              res.json({success: true, msg: 'Successful created new user.'});
+            });
+          }
+    });
 
+router.route('/login')
+    .post(function(req,res){
+        User.findOne({
+            email: req.body.email
+          }, function(err, user) {
+            if (err) throw err;
+        
+            if (!user) {
+              res.status(401).send({success: false, msg: 'Authentication failed. User not found.'});
+            } else {
+              // check if password matches
+              user.comparePassword(req.body.password, function (err, isMatch) {
+                if (isMatch && !err) {
+                  // if user is found and password is right create a token
+                  let token = jwt.sign(user.toJSON(), config.secret, {
+                    expiresIn: 3000000// 1 week
+                  });
+                  // return the information including token as JSON
+                  res.json({success: true, token: 'JWT ' + token});
+                } else {
+                  res.status(401).send({success: false, msg: 'Authentication failed. Wrong password.'});
+                }
+              });
+            }
+          });
+    })
+
+router.route('/logout')
+    .get( function(req, res) {       
+        req.logout();
+        res.json({message: 'Logged out'});
+    });
+
+    router.route('/app_user')
+    .get(function(req,res){
+       
+        
+        Event.find({}, function(err, app_events){
+            if(err){
+                res.json(err)
+            }
+            else{
+                res.json(app_events);
+            }
+        })
+    
+    })
     module.exports = router;

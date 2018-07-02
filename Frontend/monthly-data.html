@@ -1,0 +1,56 @@
+<html>
+        <head>
+            <title>Studiobooking</title>
+            <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+            <link rel = "stylesheet" type="text/css" href="res/css/monthly-data.css">
+        </head>
+        <body>
+                <div class="parent2">
+                        <div class="test1"><i class="fa fa-sign-out mini logout"></i>
+                        </div>
+                        <a href="monthly-data.html"><div class="test2"><i class="fa  fa-table  mini"></i></div></a>
+                        <a href="admin.html">
+                        <div class="test3"><i class="fa fa-user-plus mini"></i></div>
+                        </a>
+                        <a href="admin_home.html">
+                        <div class="test4"><i class="fa  fa-calendar mini"></i></div>
+                        </a>
+
+                        <div class="mask2"><i class="fa fa-bars "></i></div>
+                      </div>
+           <header>
+               <h1>
+                   Booking Details
+               </h1>
+           </header>
+           <div class="searcharea">
+            <strong>Filter:</strong>
+           <input type="text" id="search" placeholder="Type to search">
+           </div>
+           <br>
+           <div class="monthly-data">
+                <table id="table" class="hidden">
+                        <tr>
+                            
+                            <th>Studio</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Booker</th>
+                            <th>Email</th>
+                            <th>Manager</th>
+                            
+                        </tr>
+                    </table>
+           </div>
+           <div class="button-area">
+               <button class="btn">Export to excel</button>
+           </div>
+            
+            <script src= "res/JS/jquery.js" type="text/javascript"></script>
+            <script src="res/JS/table2excel.js"></script>
+            <script src= "res/JS/monthly-data.js" type="text/javascript"></script>
+        </body>
+    </html>
